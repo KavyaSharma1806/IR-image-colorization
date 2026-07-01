@@ -3,113 +3,279 @@
 
 ---
 
-## SLIDE 3: Opportunity
+# Opportunity
 
-### Slide Text Content
-- **The Baseline Limitation:** Current state-of-the-art approaches treat thermal-to-visible translation as a pure graphic design/image-to-image style transfer problem. They process thermal bands as basic 8-bit pictures, ignoring sensor physics, which causes severe structural blur and hallucinated land objects.
-- **How SMART-VIS Solves It:** We break down the challenge into a modular pipeline where data is processed sequentially: Understanding -> Enhancement -> Reconstruction -> Verification.
-- **Unique Selling Proposition (USP):** Physics-Aware, Semantically-Guided Modular Inversion. SMART-VIS converts inputs directly into physical Brightness Temperature units (K) and introduces an invariant semantic tracking mask to anchor regional land boundaries. This mathematically prevents the network from hallucinating objects that do not exist.
+## Problem with Existing Approaches
 
-### Slide Visual Component
+Most existing thermal-to-visible reconstruction methods formulate the problem as a direct image-to-image translation task. While they often generate visually appealing outputs, they rarely consider the physical nature of thermal sensing, resulting in semantic inconsistencies, structural distortions, and reduced reliability for real-world satellite analysis.
+
+---
+
+## Our Opportunity
+
+We view thermal imagery not as a grayscale photograph, but as a scientific measurement of the Earth's emitted energy.
+
+Instead of directly predicting colors, SMART-VIS first preserves the physical information contained within the thermal observations, progressively understands the scene, and finally reconstructs a trustworthy visible-spectrum representation.
+
+---
+
+## How SMART-VIS Solves the Problem
+
+SMART-VIS decomposes the reconstruction process into independent reasoning stages.
+
+• Preserve physically meaningful thermal information.
+
+• Learn robust scene representations.
+
+• Reconstruct visible appearance through hierarchical reasoning.
+
+• Preserve semantic and structural consistency throughout reconstruction.
+
+---
+
+## Unique Selling Proposition (USP)
+
+> **"From Thermal Measurements to Trustworthy Visual Intelligence."**
+
+SMART-VIS is a **Physics-Guided, Reasoning-Driven Framework** that prioritizes **scientific trustworthiness** over purely visual realism, enabling reconstructed RGB imagery that is both visually meaningful and physically defensible.
+
+
+# Features Offered by SMART-VIS
+
+SMART-VIS is designed as a modular framework where each stage addresses a specific scientific challenge in thermal-to-visible reconstruction. Rather than relying on a single end-to-end translation network, every module contributes towards producing physically meaningful, semantically reliable, and visually interpretable outputs.
+
+---
+
+## Physics-Aware Thermal Processing
+
+Converts raw Landsat Level-1 thermal observations into physically meaningful representations while preserving the original sensor information. This ensures that learning begins from scientific measurements rather than visualization-oriented grayscale images.
+
+---
+
+## Hierarchical Scene Understanding
+
+Instead of directly assigning colors, SMART-VIS progressively learns structural patterns, contextual relationships, and semantic characteristics of the observed scene before attempting visible-spectrum reconstruction.
+
+---
+
+## Cross-Modal Reconstruction
+
+Bridges the gap between thermal and visible domains by learning robust feature representations capable of reconstructing realistic RGB imagery while maintaining consistency with the observed thermal measurements.
+
+---
+
+## Semantic Consistency Preservation
+
+Preserves the identity and spatial relationships of important land-cover classes such as vegetation, water bodies, urban regions, and transportation networks, minimizing physically implausible color assignments.
+
+---
+
+## Modular & Extensible Architecture
+
+Each functional component operates independently, enabling future improvements, replacement of individual modules, or adaptation to different satellite sensors without redesigning the complete framework.
+
+---
+
+## Designed for Downstream Intelligence
+
+The reconstructed imagery is optimized not only for human interpretation but also for improving downstream computer vision tasks such as object detection, segmentation, disaster assessment, and environmental monitoring.
+
+---
+
+### Key Takeaway
+
+> **SMART-VIS does not simply generate colors—it reconstructs trustworthy visual information by combining physics, scene understanding, and semantic reasoning.**
+
 ```mermaid
-graph LR
-    subgraph Traditional Methods: Direct Image-to-Image Mapping
-        T_Fail["Raw 8-bit Thermal Pic"] --> GAN_Fail["Standard Black-Box GAN"] --> Out_Fail["Visually Pleasing but Hallucinated Output<br/>(Fails Spatial Integrity)"]
-    end
+flowchart TB
 
-    subgraph SMART-VIS Strategy: Physics-Aware Modular Pipeline
-        T_Succ["Raw Landsat 9 DN Matrix"] --> Phys["Physics Inversion (Kelvins)"] --> SR["Sub-Pixel Spatial Upscaler"] --> Sem["Semantic Context Anchor"] --> Out_Succ["Physically Plausible BGR GeoTIFF<br/>(Verified Spatial Accuracy)"]
-    end
+    A["🛰️ Landsat-9 Band 10<br/>Raw Thermal Observation"]
 
-    style T_Fail fill:#fadbd8,stroke:#cd6155
-    style Out_Fail fill:#fadbd8,stroke:#cd6155
-    style T_Succ fill:#d4efdf,stroke:#27ae60
-    style Out_Succ fill:#d4efdf,stroke:#27ae60
+    B["Physics-Aware<br/>Preprocessing"]
+
+    C["Thermal Scene<br/>Representation"]
+
+    D1["Spatial<br/>Understanding"]
+    D2["Semantic<br/>Understanding"]
+    D3["Physical<br/>Consistency"]
+
+    E["Cross-Modal<br/>Feature Fusion"]
+
+    F["Visible Spectrum<br/>Reconstruction"]
+
+    G["Semantic Consistency<br/>Refinement"]
+
+    H["Trustworthy RGB<br/>Reconstruction"]
+
+    A --> B
+    B --> C
+
+    C --> D1
+    C --> D2
+    C --> D3
+
+    D1 --> E
+    D2 --> E
+    D3 --> E
+
+    E --> F
+    F --> G
+    G --> H
+
+    style A fill:#E8F4FD,stroke:#1565C0,stroke-width:2px
+    style B fill:#FFF8E1,stroke:#F9A825,stroke-width:2px
+    style C fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+
+    style D1 fill:#E8F5E9,stroke:#2E7D32
+    style D2 fill:#E8F5E9,stroke:#2E7D32
+    style D3 fill:#E8F5E9,stroke:#2E7D32
+
+    style E fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    style F fill:#FCE4EC,stroke:#AD1457,stroke-width:2px
+    style G fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px
+    style H fill:#E8F5E9,stroke:#1B5E20,stroke-width:3px
 ```
 
-## SLIDE 4: List of Features Offered
+# Process Flow
 
-### Slide Text Content
-- **Radiometric Preservation Module:** Ingests raw .npy arrays and converts digital counts into real-world Top-of-Atmosphere (TOA) Spectral Radiance and Brightness Temperature (K), maintaining absolute sensor physics.
-- **Multi-Scale Spatial Upscaler:** Handles the explicit 200m -> 100m resolution scaling requirement using sub-pixel degradation backpropagation rather than generic bicubic resizing.
-- **Parallel Semantic-Guidance Loop:** Uses an internal deep feature extractor to cluster terrain signatures (Water, Veg, Urban, Soil) natively in the latent space to guide color assignments.
-- **Cross-Modal Alignment Engine:** Synthesizes the reflective characteristics of optical bands from emissive signatures.
-- **GeoTIFF Compliance Formatter:** Automatically structures outputs into the mandated output/model_outputs/ directories using strict Blue-Green-Red (BGR) channel sequencing.
+SMART-VIS reconstructs visible-spectrum imagery through a sequence of interpretable reasoning stages instead of a single end-to-end translation network.
 
-## SLIDE 5: Process Flow Diagram / Use-Case Diagram
+The framework progressively transforms raw thermal observations into trustworthy RGB imagery by preserving physical information, understanding scene context, reconstructing visible appearance, and refining semantic consistency.
 
-### Slide Visual Component
+### Process Overview
+
+1. Acquire original Landsat-9 Band 10 thermal observations.
+2. Preserve radiometric information through physics-aware preprocessing.
+3. Learn robust thermal scene representations.
+4. Independently analyze spatial structures, semantic context, and physical characteristics.
+5. Fuse complementary information across all feature domains.
+6. Reconstruct the visible-spectrum image.
+7. Refine semantic consistency to preserve object identity and structural integrity.
+8. Produce a trustworthy RGB image suitable for both human interpretation and downstream AI tasks.
+
+---
+
+### Key Takeaway
+
+> **SMART-VIS follows the principle: Observe → Understand → Reconstruct → Trust.**
+
+
+
+# SMART-VIS System Architecture
+
+SMART-VIS follows a modular Earth Observation pipeline where each stage performs one well-defined responsibility before passing enriched information to the next stage.
+
+Unlike conventional end-to-end image translation networks, the framework separates observation, interpretation, reasoning, reconstruction and validation into independent modules, improving explainability, modularity and future extensibility.
+
+---
+
+## Architecture Overview
+
+### 1. Observation Layer
+
+Receives original Landsat-9 Level-1 thermal observations while preserving the physical characteristics measured by the satellite sensor.
+
+---
+
+### 2. Physics Layer
+
+Transforms raw thermal measurements into physically meaningful representations suitable for learning without destroying radiometric information.
+
+---
+
+### 3. Understanding Layer
+
+Learns structural, contextual and semantic representations describing the observed Earth scene.
+
+---
+
+### 4. Reconstruction Layer
+
+Transforms thermal scene representations into visible-spectrum imagery while preserving spatial structures and semantic relationships.
+
+---
+
+### 5. Refinement Layer
+
+Improves structural consistency, removes reconstruction artifacts and preserves important land-cover boundaries.
+
+---
+
+### 6. Intelligence Layer
+
+Produces trustworthy RGB imagery suitable for
+
+• Human interpretation
+
+• Object Detection
+
+• Semantic Segmentation
+
+• Disaster Assessment
+
+• Environmental Monitoring
+
+---
+
+### Key Takeaway
+
+> SMART-VIS treats thermal reconstruction as an Earth Observation intelligence pipeline rather than a conventional image generation task.
+
 ```mermaid
-graph TD
-    In["Input: Raw Landsat 9 Band 10 Array<br/>(200m Resolution Data)"] --> Prep["1. Radiometric Inversion Stage<br/>(DN --> TOA Radiance --> Brightness Temp)"]
-    Prep --> SR["2. Spatial Super-Resolution Loop<br/>(Sub-Pixel Spatial Realism Engine)"]
+flowchart TB
 
-    SR --> Out1["Output Deliverable 1: tir_superresolved_100m/<br/>(100m High-Fidelity GeoTIFF File)"]
+A["🛰️ Observation Layer<br/>Landsat-9 Band 10"]
 
-    Out1 --> SemBranch["3. Parallel Semantic Context Masking<br/>(SegFormer Categorization Core)"]
-    Out1 --> ReconBranch["4. Cross-Modal Waveform Mapping<br/>(Thermal Emittance --> Reflective Optical BGR)"]
+B["Physics Layer<br/>Radiometric Processing"]
 
-    SemBranch --> Intersect["5. Semantic Refinement Boundary Validation<br/>(Eliminates Color-Bleeding and Boundary Blur)"]
-    ReconBranch --> Intersect
+C["Understanding Layer<br/>Scene Representation"]
 
-    Intersect --> Post["6. Geospatial Affine Reconstruction<br/>(Restores Coordinate Systems & Map Projections)"]
-    Post --> Out2["Output Deliverable 2: colorized_tir_100m/<br/>(100m Standard Multi-Band BGR GeoTIFF)"]
+D["Reconstruction Layer<br/>Cross-Modal Mapping"]
 
-    style In fill:#ebf5fb,stroke:#2980b9,stroke-width:2px
-    style Out1 fill:#fef9e7,stroke:#f39c12,stroke-width:2px
-    style Out2 fill:#e8f8f5,stroke:#2ecc71,stroke-width:2px
+E["Refinement Layer<br/>Semantic Consistency"]
+
+F["Intelligence Layer<br/>Trustworthy RGB Output"]
+
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+
+style A fill:#D6EAF8,stroke:#1F618D,stroke-width:2px
+style B fill:#FCF3CF,stroke:#B7950B,stroke-width:2px
+style C fill:#EBDEF0,stroke:#7D3C98,stroke-width:2px
+style D fill:#D5F5E3,stroke:#239B56,stroke-width:2px
+style E fill:#FDEDEC,stroke:#C0392B,stroke-width:2px
+style F fill:#E8F8F5,stroke:#117864,stroke-width:3px
 ```
 
-## SLIDE 6: Implementation Methodology (Wireframes/Mocks)
+# Technologies Used
 
-### Slide Text Content
-- **Data Leakage Prevention Protocol:** Scene-level spatial separation split (70% Train / 15% Val / 15% Test) to ensure zero patch-level spatial memorization during evaluation.
-- **Patch Matrix Pipeline:** Extracts overlapping 256 x 256 arrays from absolute physical units instead of compressed 8-bit images to maintain extreme radiometric bit-depth.
-- **Verification Map Generation:** Programmatic output of uncertainty verification maps alongside final BGR layers to flag unconfident pixel regions during downstream human analyst interpretation.
+SMART-VIS combines geospatial processing, remote sensing, computer vision and deep learning into a unified Earth Observation framework.
 
-## SLIDE 7: Architecture Diagram of the Proposed Solution
+| Layer | Technologies |
+|--------|--------------|
+| Data Acquisition | USGS EarthExplorer, Landsat 9 Collection-2 Level-1 |
+| Geospatial Processing | GDAL, Rasterio, GeoTIFF, NumPy |
+| Image Processing | OpenCV, Albumentations |
+| Deep Learning | PyTorch, TorchVision |
+| Computer Vision | Conditional Image Translation Networks, Semantic Representation Learning |
+| Model Training | CUDA, PyTorch Lightning |
+| Experiment Tracking | Weights & Biases |
+| Visualization | Matplotlib |
+| Development | Python, Git, GitHub |
 
-### Slide Visual Component
-```mermaid
-graph LR
-    subgraph Data Input Phase
-        TIR_In["100m Super-Resolved TIR Tensor<br/>(From Stage 1 SR Module Output)"]
-    end
+---
 
-    subgraph Solution Internal Pipeline
-        direction TB
-        subgraph Stream A: Feature Mapping
-            Net_Gen["Attention U-Net Generator<br/>(Cross-Modal Wave Transfer Core)"]
-        end
-        subgraph Stream B: Structural Anchor
-            Net_Sem["SegFormer Feature Encoder<br/>(Extracts Environmental Context)"]
-        end
-    end
+### Why These Technologies?
 
-    subgraph Multi-Objective Composite Loss Optimization Loop
-        L1["L1 Distance Metric Loss<br/>(Coarse Alignment Guard)"]
-        Adv["PatchGAN Discriminator Loss<br/>(High-Frequency Texture Detail)"]
-        SemLoss["Cross-Entropy Invariance Loss<br/>(Enforces Strict Class-Color Boundaries)"]
-    end
+Each technology is selected to preserve scientific integrity throughout the pipeline—from raw satellite measurements to trustworthy RGB reconstruction—while ensuring scalability, reproducibility and modular development.
 
-    TIR_In --> Net_Gen
-    TIR_In --> Net_Sem
+---
 
-    Net_Gen -->|"Synthesized Visible Channels"| L1
-    Net_Gen -->|"Synthesized Visible Channels"| Adv
+### Key Takeaway
 
-    Net_Sem -->|"Class Anchored Masks"| SemLoss
-    Net_Gen -->|"Synthesized Visible Channels"| SemLoss
+> SMART-VIS integrates the complete Earth Observation ecosystem rather than relying on a single deep learning model.
 
-    style TIR_In fill:#f4ecf7,stroke:#8e44ad,stroke-width:2px
-    style SolutionInternalPipeline fill:#f2f3f4,stroke:#7f8c8d
-    style SemLoss fill:#fadbd8,stroke:#cd6155,stroke-width:2px
-```
-
-## SLIDE 8: Technologies to be Used
-
-### Slide Text Content
-- **Geospatial Processing Ecosystem:** GDAL, Rasterio, Fiona (Ensures target GeoTIFF files preserve geospatial metadata matrices, map projection tags, and coordinate grids perfectly).
-- **Deep Learning Framework:** PyTorch, PyTorch Lightning (Powers training loops, handles parallel tensor computations, and standardizes multi-GPU execution pipelines).
-- **Matrix & Image Engineering:** NumPy (Enables processing directly on raw radiometric values inside .npy training patches), OpenCV, Albumentations (Provides robust, geospatial-safe data augmentation arrays).
-- **Pre-trained Backbones & Tracking:** HuggingFace Transformers (Accessing pre-trained remote sensing encoders), Weights & Biases (W&B) (Monitors ablation metrics and loss convergence stability).
+"The goal isn't to create colors. The goal is to restore understanding."
